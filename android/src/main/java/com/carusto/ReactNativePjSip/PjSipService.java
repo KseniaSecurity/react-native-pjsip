@@ -50,6 +50,7 @@ import org.pjsip.pjsua2.pjmedia_orient;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
+import org.pjsip.pjsua2.VidCodecParam;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -59,6 +60,8 @@ import java.util.Map;
 public class PjSipService extends Service {
 
     private static String TAG = "PjSipService";
+
+    private static long TRANSPORT_PORT = 5060;
 
     private boolean mInitialized;
 
@@ -185,6 +188,7 @@ public class PjSipService extends Service {
             {
                 TransportConfig transportConfig = new TransportConfig();
                 transportConfig.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+                transportConfig.setPort(TRANSPORT_PORT);
                 mUdpTransportId = mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, transportConfig);
                 mTrash.add(transportConfig);
             }
@@ -199,6 +203,16 @@ public class PjSipService extends Service {
                 transportConfig.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
                 mTlsTransportId = mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS, transportConfig);
                 mTrash.add(transportConfig);
+            }
+
+            // configure codec
+            {
+                String codecId = "H264";
+                VidCodecParam param = mEndpoint.getVideoCodecParam(codecId);
+                // Buffer size for decode frame
+                param.getDecFmt().setWidth(2048);
+                param.getDecFmt().setHeight(1080);
+                mEndpoint.setVideoCodecParam(codecId, param);
             }
 
             mEndpoint.libStart();
@@ -358,6 +372,9 @@ public class PjSipService extends Service {
                 break;
             case PjActions.ACTION_ANSWER_CALL:
                 handleCallAnswer(intent);
+                break;
+            case PjActions.ACTION_RING_CALL:
+                handleCallRing(intent);
                 break;
             case PjActions.ACTION_HOLD_CALL:
                 handleCallSetOnHold(intent);
@@ -708,6 +725,25 @@ public class PjSipService extends Service {
             PjSipCall call = findCall(callId);
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
+            call.answer(prm);
+
+            // Automatically put other calls on hold.
+            doPauseParallelCalls(call);
+
+            mEmitter.fireIntentHandled(intent);
+        } catch (Exception e) {
+            mEmitter.fireIntentHandled(intent, e);
+        }
+    }
+
+    private void handleCallRing(Intent intent) {
+        try {
+            int callId = intent.getIntExtra("call_id", -1);
+
+            // -----
+            PjSipCall call = findCall(callId);
+            CallOpParam prm = new CallOpParam();
+            prm.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
             call.answer(prm);
 
             // Automatically put other calls on hold.
