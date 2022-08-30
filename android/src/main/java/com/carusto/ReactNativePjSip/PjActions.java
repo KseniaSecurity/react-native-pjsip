@@ -148,11 +148,12 @@ public class PjActions {
         return intent;
     }
 
-    public static Intent createRingCallIntent(int callbackId, int callId, Context context) {
+    public static Intent createRingCallIntent(int callbackId, int callId, boolean sendProgress, Context context) {
         Intent intent = new Intent(context, PjSipService.class);
         intent.setAction(PjActions.ACTION_RING_CALL);
         intent.putExtra("callback_id", callbackId);
         intent.putExtra("call_id", callId);
+        intent.putExtra("send_progress", sendProgress);
 
         return intent;
     }

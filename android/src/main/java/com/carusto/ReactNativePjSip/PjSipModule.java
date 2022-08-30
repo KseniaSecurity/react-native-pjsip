@@ -91,9 +91,9 @@ public class PjSipModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void ringCall(int callId, Callback callback) {
+    public void ringCall(int callId, boolean sendProgress, Callback callback) {
         int callbackId = receiver.register(callback);
-        Intent intent = PjActions.createRingCallIntent(callbackId, callId, getReactApplicationContext());
+        Intent intent = PjActions.createRingCallIntent(callbackId, callId, sendProgress, getReactApplicationContext());
         getReactApplicationContext().startService(intent);
     }
 

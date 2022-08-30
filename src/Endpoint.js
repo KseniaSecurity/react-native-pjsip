@@ -256,11 +256,12 @@ export default class Endpoint extends EventEmitter {
      * Send ringing to incoming INVITE request.
      *
      * @param call {Call} Call instance
+     * @param sendProgress bool
      * @returns {Promise}
      */
-    ringCall(call) {
+    ringCall(call, sendProgress) {
         return new Promise((resolve, reject) => {
-            NativeModules.PjSipModule.ringCall(call.getId(), (successful, data) => {
+            NativeModules.PjSipModule.ringCall(call.getId(), sendProgress, (successful, data) => {
                 if (successful) {
                     resolve(data);
                 } else {

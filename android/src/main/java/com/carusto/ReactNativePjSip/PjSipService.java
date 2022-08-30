@@ -739,12 +739,18 @@ public class PjSipService extends Service {
     private void handleCallRing(Intent intent) {
         try {
             int callId = intent.getIntExtra("call_id", -1);
+            boolean sendProgress = intent.getBooleanExtra("send_progress", false);
 
             // -----
             PjSipCall call = findCall(callId);
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
             call.answer(prm);
+
+            if (sendProgress) {
+                prm.setStatusCode(pjsip_status_code.PJSIP_SC_PROGRESS);
+                call.answer(prm);
+            }
 
             // Automatically put other calls on hold.
             doPauseParallelCalls(call);
