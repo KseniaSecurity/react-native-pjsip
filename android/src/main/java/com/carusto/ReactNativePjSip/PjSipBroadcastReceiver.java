@@ -24,6 +24,10 @@ public class PjSipBroadcastReceiver extends BroadcastReceiver {
 
     private HashMap<Integer, Callback> callbacks = new HashMap<>();
 
+    public PjSipBroadcastReceiver() {
+        // EMPTY
+    }
+
     public PjSipBroadcastReceiver(ReactApplicationContext context) {
         this.context = context;
     }
