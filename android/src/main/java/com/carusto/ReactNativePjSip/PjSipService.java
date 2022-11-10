@@ -178,12 +178,13 @@ public class PjSipService extends Service {
             epConfig.getMedConfig().setClockRate(16000);
             epConfig.getMedConfig().setQuality(5);
             //PJMEDIA_ECHO_SPEEX = 1
+            //PJMEDIA_ECHO_USE_SW_ECHO = 64
             //PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR = 128
             //PJMEDIA_ECHO_USE_GAIN_CONTROLLER = 256
             //PJMEDIA_ECHO_AGGRESSIVENESS_CONSERVATIVE = 0x1000
-            epConfig.getMedConfig().setEcOptions(4481);
+            epConfig.getMedConfig().setEcOptions(4545);
             epConfig.getMedConfig().setEcTailLen(400);
-            epConfig.getMedConfig().setThreadCnt(2);
+            epConfig.getMedConfig().setThreadCnt(1);
             mEndpoint.libInit(epConfig);
 
             mTrash.add(epConfig);
