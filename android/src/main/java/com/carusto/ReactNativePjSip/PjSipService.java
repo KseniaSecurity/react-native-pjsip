@@ -183,7 +183,7 @@ public class PjSipService extends Service {
             //PJMEDIA_ECHO_USE_GAIN_CONTROLLER = 256
             //PJMEDIA_ECHO_AGGRESSIVENESS_CONSERVATIVE = 0x1000
             epConfig.getMedConfig().setEcOptions(4545);
-            epConfig.getMedConfig().setEcTailLen(800);
+            epConfig.getMedConfig().setEcTailLen(400);
             epConfig.getMedConfig().setThreadCnt(1);
             mEndpoint.libInit(epConfig);
 
